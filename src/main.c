@@ -11,6 +11,25 @@ static SystemSoundID sound_generic_3;
 static SystemSoundID sound_spacebar;
 static SystemSoundID sound_enter;
 
+SystemSoundID* get_random_generic_sound()
+{
+    int rnd = rand()%3;
+    switch(rnd)
+    {
+        case 0:
+            return &sound_generic_1;
+
+        case 1:
+            return &sound_generic_2;
+
+        case 2:
+            return &sound_generic_3;
+
+        default:
+            return &sound_generic_1;
+    }
+}
+
 int init_audio(const char *path, SystemSoundID* sound)
 {
     CFURLRef url = CFURLCreateFromFileSystemRepresentation(
@@ -53,7 +72,7 @@ CGEventRef callback(CGEventTapProxy proxy,
             event, kCGKeyboardEventKeycode
         );
 
-        printf("Keycode: %u\n", (unsigned)key);
+        //printf("Keycode: %u\n", (unsigned)key);
 
         if((unsigned)key == 36)
         {
@@ -65,7 +84,7 @@ CGEventRef callback(CGEventTapProxy proxy,
         }
         else 
         {
-            play_audio(&sound_generic_1);
+            play_audio(get_random_generic_sound());
         }
         fflush(stdout);
     }
@@ -76,6 +95,18 @@ CGEventRef callback(CGEventTapProxy proxy,
 int main(void)
 {
     if(init_audio("/Users/bastianswitajski/Git/thocctyper/audio/alpaca/press/GENERIC_R1.mp3", &sound_generic_1) != 0)
+    {
+        fprintf(stderr, "Audio konnte nicht erstellt werden.\n");
+        return 1;
+    }
+    
+    if(init_audio("/Users/bastianswitajski/Git/thocctyper/audio/alpaca/press/GENERIC_R2.mp3", &sound_generic_2) != 0)
+    {
+        fprintf(stderr, "Audio konnte nicht erstellt werden.\n");
+        return 1;
+    }
+    
+    if(init_audio("/Users/bastianswitajski/Git/thocctyper/audio/alpaca/press/GENERIC_R3.mp3", &sound_generic_3) != 0)
     {
         fprintf(stderr, "Audio konnte nicht erstellt werden.\n");
         return 1;
@@ -127,5 +158,7 @@ int main(void)
 
     CFRelease(source);
     CFRelease(tap);
+
+    cleanup_audio();
     return 0;
 }
