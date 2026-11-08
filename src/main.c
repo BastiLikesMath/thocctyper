@@ -82,13 +82,12 @@ CGEventRef callback(CGEventTapProxy proxy,
 {
 
 
-    //TODO: add sound for backspace
     if (type == kCGEventKeyDown) {
         CGKeyCode key = CGEventGetIntegerValueField(
             event, kCGKeyboardEventKeycode
         );
 
-        printf("Keycode: %d\n", (unsigned)key);
+        printf("Keycode press: %d\n", (unsigned)key);
         if((unsigned)key == 36)
         {
             play_audio(&sound_enter);
@@ -113,6 +112,7 @@ CGEventRef callback(CGEventTapProxy proxy,
             event, kCGKeyboardEventKeycode
         );
 
+        printf("Keycode release: %d\n", (unsigned)key);
         if((unsigned)key == 36)
         {
             play_audio(&sound_enter_release);
@@ -174,7 +174,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    CGEventMask mask = CGEventMaskBit(kCGEventKeyDown);
+    CGEventMask mask = CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventKeyUp);
     CFMachPortRef tap = CGEventTapCreate(
         kCGSessionEventTap,
         kCGHeadInsertEventTap,
